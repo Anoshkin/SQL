@@ -7,3 +7,5 @@
 По агрегации:
 1. select AVG(YEAR(NOW()) - YEAR(birthday_at)) from users;
 2. select DAYNAME(birthday_at) as DayOfWeek, COUNT(DAYNAME(birthday_at)) as to_count from users group by DAYNAME(birthday_at) order by to_count;
+
+--

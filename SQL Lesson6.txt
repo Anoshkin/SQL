@@ -1,0 +1,11 @@
+SELECT count(*) as total_likes FROM media WHERE id IN (
+	SELECT id FROM media 
+	WHERE user_id IN (
+		SELECT * FROM (
+			SELECT user_id FROM profiles ORDER by birthday DESC LIMIT 10
+		) as user_id		
+	)
+)
+;
+
+Сделал только одно задание
