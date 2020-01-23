@@ -1,0 +1,28 @@
+
+1.
+
+INSERT INTO orders VALUES 
+(2, 1, NOW(), NOW()),
+(3, 2, NOW(), NOW()),
+(4, 3, NOW(), NOW()),
+(5, 3, NOW(), NOW()),
+(6, 4, NOW(), NOW()),
+(7, 5, NOW(), NOW());
+
+SELECT 
+	u.name, count(u.name) as sum_of_orders
+	FROM users as u JOIN orders as o
+	ON u.id = o.user_id
+	group by u.name; -- покажет всех пользователей, которые осуществили заказ, а так же кол-во заказов
+
+
+
+
+
+2.
+
+SELECT
+	p.name, c.name
+	FROM catalogs as c LEFT JOIN products as p
+	ON p.catalog_id = c.id; -- покажет все что есть, включая то чего нет на складе
+	
