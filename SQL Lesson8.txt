@@ -1,0 +1,97 @@
+
+ -- Запросы из урока 6. Отработал все. С Джоном все получилось!
+
+SELECT
+	m.from_user_id, COUNT(m.from_user_id) as income_total_messages -- 2. Пусть задан некоторый пользователь. Из всех друзей этого пользователя найдите человека, который больше всех общался с нашим пользователем.
+	FROM friendship as f JOIN messages as m
+		ON f.friend_id = m.from_user_id
+			WHERE f.status_id = 2 AND f.user_id = 4
+	GROUP BY m.from_user_id
+	ORDER BY m.from_user_id DESC LIMIT 1;
+
+SELECT -- 3. Подсчитать общее количество лайков, которые получили 10 самых молодых пользователей.
+	m.user_id, p.birthday, COUNT(l.target_id) as total_likes
+FROM likes as l JOIN media as m
+	ON l.target_id = m.id
+	JOIN profiles as p
+	ON m.user_id = p.user_id
+GROUP BY m.user_id
+ORDER BY p.birthday DESC LIMIT 10;
+
+SELECT -- 4. Определить кто больше поставил лайков (всего) - мужчины или женщины?
+	p.sex, COUNT(p.sex) as total_likes
+FROM
+	profiles as p JOIN likes as l
+	ON p.user_id = l.user_id
+GROUP BY p.sex;
+
+
+SELECT -- 5. Найти 10 пользователей, которые проявляют наименьшую активность в использовании социальной сети.
+	p.user_id, COUNT(p.user_id) as total_messages_plus_media
+	FROM profiles as p JOIN messages as m
+		ON p.user_id = m.to_user_id
+			OR p.user_id = m.from_user_id
+		JOIN media as media
+			ON m.to_user_id = media.user_id
+				OR m.from_user_id = media.user_id
+		GROUP BY p.user_id
+		ORDER BY total_messages_plus_media LIMIT 10;
+			
+SELECT * FROM media WHERE user_id = 26; -- проверка
+SELECT * FROM messages WHERE from_user_id = 26 OR to_user_id = 26;
+
+
+
+
+ -- Далее код для разметки таблиц ключами
+
+ALTER TABLE communities_users -- 1
+	ADD CONSTRAINT communities_user_id_fk
+		FOREIGN KEY (user_id) REFERENCES profiles(user_id)
+			ON DELETE CASCADE;
+
+ALTER TABLE likes -- 2
+	ADD CONSTRAINT likes_user_id_fk
+		FOREIGN KEY (user_id) REFERENCES profiles(user_id)
+			ON DELETE CASCADE;
+		
+ALTER TABLE posts -- 3
+	ADD CONSTRAINT posts_user_id_fk
+		FOREIGN KEY (user_id) REFERENCES profiles(user_id)
+			ON DELETE CASCADE;
+		
+ALTER TABLE  communities_users -- 6
+	ADD CONSTRAINT communities_users_fk
+		FOREIGN KEY (community_id) REFERENCES communities(id)
+			ON DELETE CASCADE;
+		
+ALTER TABLE friendship -- 5
+  ADD CONSTRAINT friendship_user_id_fk 
+    FOREIGN KEY (user_id) REFERENCES profiles(user_id),
+  ADD CONSTRAINT friend_id_fk 
+    FOREIGN KEY (friend_id) REFERENCES profiles(user_id);
+   
+ALTER TABLE  meetings_users -- 6
+	ADD CONSTRAINT meeting_id_fk
+		FOREIGN KEY (meeting_id) REFERENCES meetings(id)
+			ON DELETE CASCADE;  
+		
+ALTER TABLE  media -- 7
+	ADD CONSTRAINT media_type_id_fk
+		FOREIGN KEY (media_type_id) REFERENCES media_types(id);
+		
+   
+ALTER TABLE friendship -- 8
+  ADD CONSTRAINT status_id_fk 
+    FOREIGN KEY (status_id) REFERENCES friendship_statuses(id)
+  		ON DELETE CASCADE;
+  		
+ ALTER TABLE likes -- 9
+  ADD CONSTRAINT target_id_fk 
+    FOREIGN KEY (target_id) REFERENCES media(id)
+  		ON DELETE CASCADE;
+  		
+ ALTER TABLE likes -- 10
+  ADD CONSTRAINT target_type_id_fk 
+    FOREIGN KEY (target_type_id) REFERENCES target_types(id)
+  		ON DELETE CASCADE;
